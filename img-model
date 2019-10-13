@@ -1,0 +1,25 @@
+#Önceden eğitilmiş bir modelin sınıflandırıcı olarak kullanılması örneği
+#Model köpeklerin türünü ona veilern modellerden referasn alarakhangi köpek türü olduğunu tespit etmeye çalışıyor.
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.applications.vgg16 import preprocess_input
+from keras.applications.vgg16 import decode_predictions
+from keras.applications.vgg16 import VGG16
+# dosyadan bir resim yolu gösteriyoruz.
+image = load_img('dog.jpg', target_size=(224, 224))
+#görüntü piksellerini numpy dizisine dönüştürüyoruz.
+image = img_to_array(image)
+# model için verileri yeniden şekillendirme yapıyoruz.
+image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+# VGG modeli için görüntü hazırlama
+image = preprocess_input(image)
+# modeli yükle
+model = VGG16()
+# tüm çıktı sınıfları arasındaki olasılığı tahmin eder
+yhat = model.predict(image)
+# olasılıkları sınıf etiketlerine dönüştürdük
+label = decode_predictions(yhat)
+# en olası sonucu alır, en yüksek olasılık hangisi ise onu labele aktarır
+label = label[0][0]
+# sınıflandırmayı ekrana yazdır
+print('%s (%.2f%%)' % (label[1], label[2]*100))
